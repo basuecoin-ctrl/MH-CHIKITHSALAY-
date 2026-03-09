@@ -1,6 +1,269 @@
 <!DOCTYPE html>
 <html>
 <head>
+<title>Homoeopathy Clinic Pro</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#f3f3f3;
+padding:20px;
+}
+
+h1{
+color:darkgreen;
+}
+
+h2{
+background:#e8ffe8;
+padding:5px;
+}
+
+input,textarea,select{
+width:100%;
+padding:8px;
+margin:5px 0;
+}
+
+button{
+padding:8px 15px;
+margin-top:5px;
+cursor:pointer;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+background:white;
+margin-top:20px;
+}
+
+th,td{
+border:1px solid #ccc;
+padding:8px;
+text-align:center;
+}
+
+.container{
+background:white;
+padding:20px;
+border-radius:10px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Homoeopathy Clinic Professional System</h1>
+
+<h2>Patient Information</h2>
+
+<input id="name" placeholder="Patient Name">
+<input id="age" placeholder="Age">
+
+<select id="gender">
+<option>Male</option>
+<option>Female</option>
+</select>
+
+<input id="mobile" placeholder="Mobile">
+
+<textarea id="complaint" placeholder="Main Complaint"></textarea>
+
+<textarea id="mental" placeholder="Mental Symptoms"></textarea>
+
+<textarea id="history" placeholder="Past History"></textarea>
+
+<textarea id="medicine" placeholder="Prescription"></textarea>
+
+<input id="followup" type="date">
+
+<button onclick="savePatient()">Save Patient</button>
+
+<hr>
+
+<h2>Search Patient</h2>
+
+<input id="search" placeholder="Search patient" onkeyup="searchPatient()">
+
+<h2>Patient List</h2>
+
+<table id="table">
+
+<tr>
+<th>Name</th>
+<th>Age</th>
+<th>Mobile</th>
+<th>Complaint</th>
+<th>Medicine</th>
+<th>FollowUp</th>
+<th>Print</th>
+<th>Delete</th>
+</tr>
+
+</table>
+
+<hr>
+
+<h2>Simple Repertory</h2>
+
+<select id="symptom">
+<option value="">Select Symptom</option>
+<option value="fever">Fever sudden</option>
+<option value="injury">Injury / trauma</option>
+<option value="cold">Cold with sneezing</option>
+<option value="anger">Anger / irritability</option>
+<option value="joint">Joint pain worse movement</option>
+</select>
+
+<button onclick="suggestRemedy()">Suggest Remedy</button>
+
+<h3 id="remedyResult"></h3>
+
+</div>
+
+<script>
+
+let patients = JSON.parse(localStorage.getItem("patients")) || [];
+
+function savePatient(){
+
+let p={
+name:document.getElementById("name").value,
+age:document.getElementById("age").value,
+mobile:document.getElementById("mobile").value,
+complaint:document.getElementById("complaint").value,
+medicine:document.getElementById("medicine").value,
+followup:document.getElementById("followup").value
+};
+
+patients.push(p);
+
+localStorage.setItem("patients",JSON.stringify(patients));
+
+showPatients();
+
+}
+
+function showPatients(){
+
+let table=document.getElementById("table");
+
+table.innerHTML=`
+<tr>
+<th>Name</th>
+<th>Age</th>
+<th>Mobile</th>
+<th>Complaint</th>
+<th>Medicine</th>
+<th>FollowUp</th>
+<th>Print</th>
+<th>Delete</th>
+</tr>
+`;
+
+patients.forEach((p,i)=>{
+
+let row=table.insertRow();
+
+row.insertCell(0).innerHTML=p.name;
+row.insertCell(1).innerHTML=p.age;
+row.insertCell(2).innerHTML=p.mobile;
+row.insertCell(3).innerHTML=p.complaint;
+row.insertCell(4).innerHTML=p.medicine;
+row.insertCell(5).innerHTML=p.followup;
+
+let printBtn=document.createElement("button");
+printBtn.innerHTML="Print";
+
+printBtn.onclick=function(){
+
+let w=window.open();
+
+w.document.write("<h2>Homoeopathy Prescription</h2>");
+w.document.write("Name: "+p.name+"<br>");
+w.document.write("Age: "+p.age+"<br>");
+w.document.write("Complaint: "+p.complaint+"<br><br>");
+w.document.write("Medicine: "+p.medicine+"<br>");
+
+w.print();
+
+}
+
+row.insertCell(6).appendChild(printBtn);
+
+let delBtn=document.createElement("button");
+delBtn.innerHTML="Delete";
+
+delBtn.onclick=function(){
+
+patients.splice(i,1);
+
+localStorage.setItem("patients",JSON.stringify(patients));
+
+showPatients();
+
+}
+
+row.insertCell(7).appendChild(delBtn);
+
+});
+
+}
+
+function searchPatient(){
+
+let text=document.getElementById("search").value.toLowerCase();
+
+let filtered=patients.filter(p=>p.name.toLowerCase().includes(text));
+
+let table=document.getElementById("table");
+
+table.innerHTML="";
+
+filtered.forEach(p=>{
+
+let row=table.insertRow();
+
+row.insertCell(0).innerHTML=p.name;
+row.insertCell(1).innerHTML=p.age;
+row.insertCell(2).innerHTML=p.mobile;
+row.insertCell(3).innerHTML=p.complaint;
+row.insertCell(4).innerHTML=p.medicine;
+row.insertCell(5).innerHTML=p.followup;
+
+});
+
+}
+
+function suggestRemedy(){
+
+let s=document.getElementById("symptom").value;
+
+let remedy="";
+
+if(s=="fever") remedy="Aconite / Belladonna";
+if(s=="injury") remedy="Arnica";
+if(s=="cold") remedy="Allium Cepa";
+if(s=="anger") remedy="Nux Vomica";
+if(s=="joint") remedy="Rhus Toxicodendron";
+
+document.getElementById("remedyResult").innerHTML="Suggested Remedy: "+remedy;
+
+}
+
+showPatients();
+
+</script>
+
+</body>
+</html><!DOCTYPE html>
+<html>
+<head>
 <title>Homoeopathy AI Assistant</title>
 
 <style>
